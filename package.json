@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/shimuzinho/task-manager-api/issues"
   },
-  "homepage": "https://github.com/shimuzinho/task-manager-api#readme"
+  "homepage": "https://github.com/shimuzinho/task-manager-api#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongose": "^0.0.2-security"
+  }
 }
