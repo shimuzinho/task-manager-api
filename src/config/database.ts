@@ -9,6 +9,6 @@ export async function connectDatabase () {
         await mongoose.connect(mongoURI);
     } catch (err) {
         console.log(`Erro ao conectar ao banco de dados: ${err}`);
-        process.exit(1)
+        process.exit(1);
     }
 }
