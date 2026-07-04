@@ -3,6 +3,7 @@ import { Router } from "express";
 
 const taskRoutes = Router();
 
+taskRoutes.get("/tasks", TaskController.getAll);
 taskRoutes.post("/tasks", TaskController.create);
 
 export default taskRoutes;
