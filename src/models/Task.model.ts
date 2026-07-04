@@ -16,6 +16,7 @@ const taskSchema = new Schema<ITask>(
         },
         description: {
             type: String,
+            default: "",
             trim: true
         },
         completionDate: {

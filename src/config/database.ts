@@ -7,8 +7,9 @@ export async function connectDatabase () {
             throw new Error("Caminho para o banco de dados não definido.");
         }
         await mongoose.connect(mongoURI);
-    } catch (err) {
-        console.log(`Erro ao conectar ao banco de dados: ${err}`);
+        console.log("Banco de dados conectado com sucesso.");
+    } catch (error) {
+        console.log(`Erro ao conectar ao banco de dados: ${error}`);
         process.exit(1);
     }
 }
