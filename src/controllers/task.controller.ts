@@ -87,6 +87,38 @@ class TaskController {
             });
         }
     }
+
+    static async delete(req: Request, res: Response) {
+        const id = req.params.id;
+
+        try {
+            const taskDeleted = await Task.findByIdAndDelete(id);
+
+            if (taskDeleted == null) {
+                return res.status(404).json({
+                    message: "There is no task with that ID.",
+                    success: false
+                });
+            }
+
+            return res.status(200).json({
+                message: "Task deleted successfully.",
+                success: true
+            });
+        } catch (error) {
+            if (error instanceof Error && error.name == "CastError") {
+                return res.status(400).json({
+                    message: "Invalid ID format.",
+                    success: false
+                });
+            }
+
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
 }
 
 export default TaskController;
