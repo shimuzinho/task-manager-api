@@ -1,12 +1,6 @@
 import Task from "../models/Task.model"
 import { Request, Response } from "express";
 
-interface CreateTaskBody {
-    title: string,
-    description?: string,
-    completionDate: string
-}
-
 class TaskController {
     static async getOne(req: Request, res: Response) {
         const id = req.params.id;
@@ -59,14 +53,11 @@ class TaskController {
     }
 
     static async create(req: Request, res: Response) {
-        const { title, description, completionDate }: CreateTaskBody = req.body;
-
-        if (!title || !completionDate) {
-            return res.status(400).json({
-                message: "Title and Completion Date are required.",
-                success: false,
-            });
-        }
+        const { title, description, completionDate }: {
+            title: string,
+            description?: string,
+            completionDate: string
+        } = req.body;
 
         try {
             const newTask = await Task.create({
@@ -81,6 +72,67 @@ class TaskController {
                 data: newTask
             });
         } catch (error) {
+            if (error instanceof Error && error.name == "ValidationError") {
+                return res.status(400).json({
+                    message: "Invalid data provided.",
+                    success: false
+                });
+            }
+
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
+
+    static async update(req: Request, res: Response) {
+        const id = req.params.id;
+        const { title, description, completionDate, isCompleted }: {
+            title?: string,
+            description?: string,
+            completionDate?: string,
+            isCompleted?: boolean
+        } = req.body;
+
+        try {
+            const taskUpdated = await Task.findByIdAndUpdate(id, {
+                title,
+                description,
+                completionDate: completionDate ? new Date(completionDate) : undefined,
+                isCompleted
+            }, {
+                returnDocument: "after",
+                runValidators: true
+            });
+
+            if (!taskUpdated) {
+                return res.status(404).json({
+                    message: "There is no task with that ID.",
+                    success: false
+                });
+            }
+
+            return res.status(200).json({
+                message: "Task updated successfully.",
+                success: true,
+                data: taskUpdated
+            });
+        } catch (error) {
+            if (error instanceof Error && error.name == "ValidationError") {
+                return res.status(400).json({
+                    message: "Invalid data provided.",
+                    success: false
+                });
+            }
+
+            if (error instanceof Error && error.name == "CastError") {
+                return res.status(400).json({
+                    message: "Invalid ID format.",
+                    success: false
+                });
+            }
+
             return res.status(500).json({
                 message: "Internal server error.",
                 success: false
