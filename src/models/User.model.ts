@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import bcryptjs from "bcryptjs";
 
 interface IUser {
     avatar?: string,
@@ -28,11 +29,27 @@ const UserSchema = new Schema<IUser>({
     password: {
         type: String,
         required: true,
-        select: false
+        select: false,
+        match: /^\S+$/
     },
 
 }, {
     timestamps: true
+});
+
+UserSchema.pre("save", async function() {
+    if (!this.isModified('password')) {
+        return;
+    }
+    
+    try {
+        const salt = await bcryptjs.genSalt(8);
+        const hashPassword = await bcryptjs.hash(this.password, salt);
+    
+        this.password = hashPassword;
+    } catch (error) {
+        throw new Error("Failed to hash password.");
+    }
 });
 
 const User = model<IUser>("User", UserSchema);
