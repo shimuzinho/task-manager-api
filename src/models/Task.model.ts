@@ -7,32 +7,29 @@ interface ITask {
     isCompleted: boolean;
 }
 
-const taskSchema = new Schema<ITask>(
-    {
-        title: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        description: {
-            type: String,
-            default: "",
-            trim: true
-        },
-        completionDate: {
-            type: Date,
-            required: true
-        },
-        isCompleted: {
-            type: Boolean,
-            default: false,
-            required: true
-        }
+const taskSchema = new Schema<ITask>({
+    title: {
+        type: String,
+        required: true,
+        trim: true
     },
-    {
-        timestamps: true
+    description: {
+        type: String,
+        default: "",
+        trim: true
+    },
+    completionDate: {
+        type: Date,
+        required: true
+    },
+    isCompleted: {
+        type: Boolean,
+        default: false,
+        required: true
     }
-);
+}, {
+    timestamps: true
+});
 
 const Task = model<ITask>("Task", taskSchema);
 export default Task;
