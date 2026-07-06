@@ -10,7 +10,8 @@ interface IUser {
 
 const UserSchema = new Schema<IUser>({
     avatar: {
-        type: String  
+        type: String,
+        default: "https://res.cloudinary.com/lrev6pdl/image/upload/v1783381236/avatarDefault_t6wthh.png"
     },
     username: {
         type: String,
