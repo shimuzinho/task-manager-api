@@ -1,9 +1,46 @@
-import User from "../models/User.model";
+import User, { IUser } from "../models/User.model";
 import { Request, Response } from "express";
 
 class UserController {
+    static async getOne(req: Request, res: Response) {
+        const id = req.params.id;
+
+        try {
+            const user = await User.findById(id);
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "There is no user with that ID.",
+                    success: false
+                });
+            }
+
+            return res.status(200).json({
+                message: "User search completed successfully.",
+                success: true,
+                data: user
+            });
+        } catch (error) {
+            if (error instanceof Error && error.name == "CastError") {
+                return res.status(400).json({
+                    message: "Invalid Id format.",
+                    success: false
+                });
+            }
+
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
+
     static async register(req: Request, res: Response) {
-        const { username, email, password } = req.body;
+        const { username, email, password }: {
+            username: string,
+            email: string,
+            password: string
+        } = req.body;
 
         try {
             const newUser = await User.create({
@@ -12,10 +49,13 @@ class UserController {
                 password
             });
 
+            let tempUser = newUser.toObject() as Partial<IUser>;
+            delete tempUser.password;
+
             return res.status(201).json({
                 message: "User registred successfully.",
                 success: true,
-                data: newUser
+                data: tempUser
             });
         } catch (error) {
             if (error instanceof Error && error.name == "ValidationError") {
