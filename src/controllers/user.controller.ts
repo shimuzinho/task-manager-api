@@ -1,5 +1,7 @@
 import User, { IUser } from "../models/User.model";
 import { Request, Response } from "express";
+import bcryptjs from "bcryptjs";
+import { sign } from "jsonwebtoken";
 
 class UserController {
     static async getOne(req: Request, res: Response) {
@@ -35,6 +37,45 @@ class UserController {
         }
     }
 
+    static async login(req: Request, res:Response) {
+        const { email, password }: {
+            email: string,
+            password: string
+        } = req.body;
+
+        try {
+            const user = await User.findOne({email}).select("+password");
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "User not found.",
+                    success: false
+                });
+            }
+
+            const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+
+            if (!isPasswordCorrect) {
+                return res.status(401).json({
+                    message: "Incorrect password.",
+                    success: false
+                });
+            }
+
+            const token = sign({id: user.id}, process.env.SECRET_KEY!, {expiresIn: "2h"});
+            return res.status(200).json({
+                message: "Login successful.",
+                success: true,
+                data: token
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
+
     static async register(req: Request, res: Response) {
         const { username, email, password }: {
             username: string,
@@ -53,7 +94,7 @@ class UserController {
             delete tempUser.password;
 
             return res.status(201).json({
-                message: "User registred successfully.",
+                message: "User registered successfully.",
                 success: true,
                 data: tempUser
             });
