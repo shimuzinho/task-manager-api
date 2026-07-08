@@ -1,10 +1,11 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 interface ITask {
     title: string;
     description?: string;
     completionDate: Date;
     isCompleted: boolean;
+    createdBy: Types.ObjectId;
 }
 
 const taskSchema = new Schema<ITask>({
@@ -25,6 +26,11 @@ const taskSchema = new Schema<ITask>({
     isCompleted: {
         type: Boolean,
         default: false,
+        required: true
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true
     }
 }, {
