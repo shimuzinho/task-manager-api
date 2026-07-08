@@ -6,7 +6,10 @@ class TaskController {
         const id = req.params.id;
 
         try {
-            const task = await Task.findById(id);
+            const task = await Task.findOne({
+                _id: id,
+                createdBy: req.userId
+            });
 
             if (!task) {
                 return res.status(404).json({
@@ -37,7 +40,9 @@ class TaskController {
 
     static async getAll(req: Request, res: Response) {
         try {
-            const allTasks = await Task.find();
+            const allTasks = await Task.find({
+                createdBy: req.userId
+            });
 
             return res.status(200).json({
                 message: "Tasks search completed successfully.",
@@ -56,14 +61,15 @@ class TaskController {
         const { title, description, completionDate }: {
             title: string,
             description?: string,
-            completionDate: string
+            completionDate: string,
         } = req.body;
 
         try {
             const newTask = await Task.create({
                 title,
                 description,
-                completionDate: new Date(completionDate)
+                completionDate: new Date(completionDate),
+                createdBy: req.userId
             });
 
             return res.status(201).json({
@@ -96,7 +102,10 @@ class TaskController {
         } = req.body;
 
         try {
-            const taskUpdated = await Task.findByIdAndUpdate(id, {
+            const taskUpdated = await Task.findOneAndUpdate({
+                _id: id,
+                createdBy: req.userId
+            }, {
                 title,
                 description,
                 completionDate: completionDate ? new Date(completionDate) : undefined,
@@ -144,7 +153,10 @@ class TaskController {
         const id = req.params.id;
 
         try {
-            const taskDeleted = await Task.findByIdAndDelete(id);
+            const taskDeleted = await Task.findOneAndDelete({
+                _id: id,
+                createdBy: req.userId
+            });
 
             if (taskDeleted == null) {
                 return res.status(404).json({
