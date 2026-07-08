@@ -158,7 +158,7 @@ class TaskController {
                 createdBy: req.userId
             });
 
-            if (taskDeleted == null) {
+            if (!taskDeleted) {
                 return res.status(404).json({
                     message: "There is no task with that ID.",
                     success: false

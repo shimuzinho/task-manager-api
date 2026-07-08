@@ -25,7 +25,7 @@ class UserController {
         } catch (error) {
             if (error instanceof Error && error.name == "CastError") {
                 return res.status(400).json({
-                    message: "Invalid Id format.",
+                    message: "Invalid ID format.",
                     success: false
                 });
             }
@@ -37,14 +37,14 @@ class UserController {
         }
     }
 
-    static async login(req: Request, res:Response) {
+    static async login(req: Request, res: Response) {
         const { email, password }: {
             email: string,
             password: string
         } = req.body;
 
         try {
-            const user = await User.findOne({email}).select("+password");
+            const user = await User.findOne({ email }).select("+password");
 
             if (!user) {
                 return res.status(404).json({
@@ -62,7 +62,7 @@ class UserController {
                 });
             }
 
-            const token = sign({id: user.id}, process.env.SECRET_KEY!, {expiresIn: "2h"});
+            const token = sign({ id: user.id }, process.env.SECRET_KEY!, { expiresIn: "2h" });
             return res.status(200).json({
                 message: "Login successful.",
                 success: true,
@@ -112,7 +112,32 @@ class UserController {
                     success: false
                 });
             }
-            
+
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
+
+    static async delete(req: Request, res: Response) {
+        const id = req.userId;
+
+        try {
+            const deletedUser = await User.findByIdAndDelete(id);
+
+            if (!deletedUser) {
+                return res.status(404).json({
+                    message: "User not found.",
+                    success: false
+                });
+            }
+
+            return res.status(200).json({
+                message: "User deleted successfully.",
+                success: true
+            });
+        } catch (error) {
             return res.status(500).json({
                 message: "Internal server error.",
                 success: false
