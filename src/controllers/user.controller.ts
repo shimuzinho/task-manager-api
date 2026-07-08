@@ -5,7 +5,7 @@ import { sign } from "jsonwebtoken";
 
 class UserController {
     static async getOne(req: Request, res: Response) {
-        const id = req.params.id;
+        const id = req.userId;
 
         try {
             const user = await User.findById(id);
