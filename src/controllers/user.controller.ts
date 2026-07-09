@@ -12,7 +12,7 @@ class UserController {
 
             if (!user) {
                 return res.status(404).json({
-                    message: "There is no user with that ID.",
+                    message: "User not found.",
                     success: false
                 });
             }
@@ -99,6 +99,67 @@ class UserController {
                 data: tempUser
             });
         } catch (error) {
+            if (error instanceof Error && error.name == "ValidationError") {
+                return res.status(400).json({
+                    message: "Invalid data provided.",
+                    success: false
+                });
+            }
+
+            if (error instanceof Error && "code" in error && error.code == 11000) {
+                return res.status(409).json({
+                    message: "Username or Email already registered.",
+                    success: false
+                });
+            }
+
+            return res.status(500).json({
+                message: "Internal server error.",
+                success: false
+            });
+        }
+    }
+
+    static async update(req: Request, res: Response) {
+        const id = req.userId;
+        const { avatar, username, email }: {
+            avatar?: string,
+            username?: string,
+            email?: string
+        } = req.body;
+
+        try {
+            const updatedUser = await User.findOneAndUpdate({
+                _id: id
+            }, {
+                avatar,
+                username,
+                email,
+            }, {
+                returnDocument: "after",
+                runValidators: true
+            });
+
+            if (!updatedUser) {
+                return res.status(404).json({
+                    message: "User not found.",
+                    success: false
+                });
+            }
+
+            return res.status(200).json({
+                message: "User updated successfully.",
+                success: true,
+                data: updatedUser
+            });
+        } catch (error) {
+            if (error instanceof Error && error.name == "CastError") {
+                return res.status(400).json({
+                    message: "Invalid ID format.",
+                    success: false
+                });
+            }
+
             if (error instanceof Error && error.name == "ValidationError") {
                 return res.status(400).json({
                     message: "Invalid data provided.",
