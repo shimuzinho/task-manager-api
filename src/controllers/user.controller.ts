@@ -199,6 +199,13 @@ class UserController {
                 success: true
             });
         } catch (error) {
+            if (error instanceof Error && error.name == "CastError") {
+                return res.status(400).json({
+                    message: "Invalid ID format.",
+                    success: false
+                });
+            }
+
             return res.status(500).json({
                 message: "Internal server error.",
                 success: false
