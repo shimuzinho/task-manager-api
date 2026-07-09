@@ -13,7 +13,7 @@ class TaskController {
 
             if (!task) {
                 return res.status(404).json({
-                    message: "There is no task with that ID.",
+                    message: "Task not found.",
                     success: false
                 });
             }
@@ -117,7 +117,7 @@ class TaskController {
 
             if (!taskUpdated) {
                 return res.status(404).json({
-                    message: "There is no task with that ID.",
+                    message: "Task not found.",
                     success: false
                 });
             }
@@ -160,7 +160,7 @@ class TaskController {
 
             if (!taskDeleted) {
                 return res.status(404).json({
-                    message: "There is no task with that ID.",
+                    message: "Task not found.",
                     success: false
                 });
             }
