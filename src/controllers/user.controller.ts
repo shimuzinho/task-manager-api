@@ -201,7 +201,7 @@ class UserController {
 
             if (!isPasswordCorrect) {
                 return res.status(401).json({
-                    message: "Current password is incorrect.",
+                    message: "Incorrect password.",
                     success: false
                 });
             }
@@ -231,16 +231,30 @@ class UserController {
 
     static async delete(req: Request, res: Response) {
         const id = req.userId;
+        const { password }: {
+            password: string
+        } = req.body;
 
         try {
-            const deletedUser = await User.findByIdAndDelete(id);
-
-            if (!deletedUser) {
+            const user = await User.findById(id).select("+password");
+            
+            if (!user) {
                 return res.status(404).json({
                     message: "User not found.",
                     success: false
                 });
             }
+
+            const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+
+            if (!isPasswordCorrect) {
+                return res.status(401).json({
+                    message: "Incorrect password.",
+                    success: false
+                });
+            }
+
+            await user.deleteOne();
 
             return res.status(200).json({
                 message: "User deleted successfully.",
