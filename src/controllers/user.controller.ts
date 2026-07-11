@@ -20,7 +20,9 @@ class UserController {
             return res.status(200).json({
                 message: "User search completed successfully.",
                 success: true,
-                data: user
+                data: {
+                    user
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "CastError") {
@@ -66,7 +68,9 @@ class UserController {
             return res.status(200).json({
                 message: "Login successful.",
                 success: true,
-                data: token
+                data: {
+                    token
+                }
             });
         } catch (error) {
             return res.status(500).json({
@@ -93,10 +97,14 @@ class UserController {
             let tempUser = newUser.toObject() as Partial<IUser>;
             delete tempUser.password;
 
+            const token = sign({ id: newUser.id }, process.env.SECRET_KEY!, { expiresIn: "2h" });
             return res.status(201).json({
                 message: "User registered successfully.",
                 success: true,
-                data: tempUser
+                data: {
+                    user: tempUser,
+                    token
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "ValidationError") {
@@ -150,7 +158,9 @@ class UserController {
             return res.status(200).json({
                 message: "User updated successfully.",
                 success: true,
-                data: updatedUser
+                data: {
+                    user: updatedUser
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "CastError") {
