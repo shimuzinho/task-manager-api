@@ -21,7 +21,9 @@ class TaskController {
             return res.status(200).json({
                 message: "Task search completed successfully.",
                 success: true,
-                data: task
+                data: {
+                    task
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "CastError") {
@@ -47,7 +49,9 @@ class TaskController {
             return res.status(200).json({
                 message: "Tasks search completed successfully.",
                 success: true,
-                data: allTasks
+                data: {
+                    tasks: allTasks
+                }
             });
         } catch (error) {
             return res.status(500).json({
@@ -75,7 +79,9 @@ class TaskController {
             return res.status(201).json({
                 message: "Task created successfully.",
                 success: true,
-                data: newTask
+                data: {
+                    task: newTask
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "ValidationError") {
@@ -125,7 +131,9 @@ class TaskController {
             return res.status(200).json({
                 message: "Task updated successfully.",
                 success: true,
-                data: taskUpdated
+                data: {
+                    task: taskUpdated
+                }
             });
         } catch (error) {
             if (error instanceof Error && error.name == "ValidationError") {
