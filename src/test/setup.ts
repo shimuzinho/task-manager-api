@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.test" });
 
 let mongo: any;
 beforeAll(async () => {
@@ -16,6 +18,6 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-    await mongo.stop();
     await mongoose.connection.close();
+    await mongo.stop();
 });
